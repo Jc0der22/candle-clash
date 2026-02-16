@@ -6,3 +6,6 @@ cmds = []
 
 [start]
 cmd = "npx expo start --tunnel --non-interactive"
+
+[phases.setup]
+nixPkgs = ["nodejs_22"]
