@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%; margin: 0; padding: 0;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Candle Clash Chart</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    body {
+      background: #0A0A0A;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    #chart {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body style="height: 100%; margin: 0; padding: 0; background: #0A0A0A;">
+  <div id="chart" style="width: 100%; height: 100%;"></div>
+  <script src="https://unpkg.com/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.js"></script>
+  <script>
+    (function() {
+      let userHasScrolled = false;
+
+      const chart = LightweightCharts.createChart(document.getElementById('chart'), {
+        autoSize: true,
+        layout: {
+          background: { type: 'solid', color: '#0A0A0A' },
+          textColor: '#FFFFFF',
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        },
+        grid: {
+          vertLines: { color: 'rgba(26, 26, 26, 0.3)' },
+          horzLines: { color: 'rgba(26, 26, 26, 0.3)' },
+        },
+        crosshair: {
+          mode: LightweightCharts.CrosshairMode.Magnet,
+          vertLine: {
+            width: 1,
+            color: 'rgba(0, 229, 255, 0.5)',
+            style: 2,
+            labelBackgroundColor: '#1A1A1A',
+          },
+          horzLine: {
+            width: 1,
+            color: 'rgba(0, 229, 255, 0.5)',
+            style: 2,
+            labelBackgroundColor: '#1A1A1A',
+          },
+        },
+        rightPriceScale: {
+          borderColor: '#444',
+          scaleMargins: { top: 0.2, bottom: 0.2 },
+          autoScale: true,
+        },
+        timeScale: {
+          barSpacing: 8,
+          minBarSpacing: 3,
+          timeVisible: true,
+          secondsVisible: false,
+          borderColor: '#444',
+          tickMarkFormatter: function(time) {
+            const d = new Date(time * 1000);
+            const h = d.getHours();
+            const m = d.getMinutes();
+            return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+          },
+        },
+        handleScroll: {
+          mouseWheel: true,
+          pressedMouseMove: true,
+          horzTouchDrag: true,
+          vertTouchDrag: false,
+        },
+        handleScale: {
+          mouseWheel: true,
+          pinch: true,
+          axisPressedMouseMove: {
+            time: true,
+            price: true,
+          },
+        },
+      });
+
+      chart.timeScale().subscribeVisibleTimeRangeChange(function() {
+        userHasScrolled = true;
+        if (window.scrollResetTimer) clearTimeout(window.scrollResetTimer);
+        window.scrollResetTimer = setTimeout(function() {
+          userHasScrolled = false;
+        }, 5000);
+      });
+
+      const candlestickSeries = chart.addCandlestickSeries({
+        upColor: '#10B981',
+        downColor: '#EF4444',
+        borderUpColor: '#10B981',
+        borderDownColor: '#EF4444',
+        wickUpColor: '#10B981',
+        wickDownColor: '#EF4444',
+      });
+
+      chart.timeScale().applyOptions({
+        rightBarSpacing: 12,
+        rightOffset: 5,
+      });
+
+      window.updateChart = function(candles, currentIndex) {
+        try {
+          if (!candles || !Array.isArray(candles) || candles.length === 0) return;
+          const data = candles.map(function(c) {
+            return {
+              time: c.time,
+              open: c.open,
+              high: c.high,
+              low: c.low,
+              close: c.close,
+            };
+          });
+          candlestickSeries.setData(data);
+
+          if (!userHasScrolled) {
+            var visibleCount = Math.min(45, candles.length);
+            var fromIndex = Math.max(0, (currentIndex !== undefined ? currentIndex : data.length - 1) - visibleCount + 1);
+            var toIndex = currentIndex !== undefined ? currentIndex : data.length - 1;
+
+            chart.timeScale().setVisibleRange({
+              from: data[fromIndex].time,
+              to: data[toIndex].time,
+            });
+
+            chart.timeScale().scrollToPosition(5, false);
+          }
+        } catch (e) {
+          console.error('Chart update error:', e);
+        }
+      };
+    })();
+  </script>
+</body>
+</html>
