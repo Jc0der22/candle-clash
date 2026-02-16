@@ -5,7 +5,7 @@ cmds = ["npm install --legacy-peer-deps"]
 cmds = []
 
 [start]
-cmd = "npx expo start --tunnel --non-interactive"
+cmd = "node tunnel-start.js"
 
 [phases.setup]
 nixPkgs = ["nodejs_22"]
