@@ -5,17 +5,24 @@ console.log('⏳ Waiting for tunnel URL...');
 console.log('');
 
 const expo = spawn('npx', ['expo', 'start', '--tunnel'], {
-  env: { ...process.env }
+  env: { 
+    ...process.env,
+    CI: 'false',  // Force non-CI mode to show URL
+    EXPO_NO_TELEMETRY: '1'
+  },
+  shell: true
 });
 
 let foundUrl = false;
+let allOutput = '';
 
 expo.stdout.on('data', (data) => {
   const output = data.toString();
-  console.log(output);
+  process.stdout.write(output);
+  allOutput += output;
   
-  // Look for exp:// URL in output
-  const expMatch = output.match(/exp:\/\/[^\s]+/);
+  // Look for exp:// URL
+  const expMatch = output.match(/exp:\/\/[^\s\)]+/);
   if (expMatch && !foundUrl) {
     console.log('');
     console.log('════════════════════════════════════════');
@@ -30,16 +37,27 @@ expo.stdout.on('data', (data) => {
 });
 
 expo.stderr.on('data', (data) => {
-  console.error(data.toString());
+  const output = data.toString();
+  process.stderr.write(output);
+  allOutput += output;
 });
 
 expo.on('close', (code) => {
-  console.log(`Expo exited with code ${code}`);
+  if (!foundUrl) {
+    console.log('');
+    console.log('⚠️  exp:// URL not found in output');
+    console.log('Search above for "exp://" or "Tunnel" manually');
+    console.log('');
+  }
   process.exit(code);
 });
 
+// Extended timeout since tunnel takes time
 setTimeout(() => {
   if (!foundUrl) {
-    console.log('⚠️  URL not detected yet - tunnel may still be starting...');
+    console.log('');
+    console.log('📍 Still waiting for tunnel URL...');
+    console.log('This can take 1-2 minutes on first start');
+    console.log('');
   }
-}, 30000);
+}, 45000);
