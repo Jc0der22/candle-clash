@@ -4,19 +4,35 @@
     "slug": "candle-clash",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "ae95e278-3067-4205-841d-65bd5ff58814"
-      }
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
     },
     "android": {
-      "package": "com.jaypell22.candleclash"
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "package": "com.candleclash.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": ["expo-router"],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "2ea46a70-df0a-4c4e-be42-e645ed4197ea"
+      }
     }
   }
 }
