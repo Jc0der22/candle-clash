@@ -5,6 +5,18 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
-    "platforms": ["ios", "android", "web"]
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "ae95e278-3067-4205-841d-65bd5ff58814"
+      }
+    },
+    "android": {
+      "package": "com.jaypell22.candleclash"
+    }
   }
 }
