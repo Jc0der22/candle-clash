@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Candle Clash",
-    "slug": "app",
+    "slug": "candle-clash",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -33,7 +33,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "2ea46a70-df0a-4c4e-be42-e645ed4197ea"
+        "projectId": "ae95e278-3067-4205-841d-65bd5ff58814"
       }
     },
     "owner": "jaypell22"
